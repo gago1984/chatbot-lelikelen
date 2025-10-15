@@ -20,7 +20,7 @@ const Index = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Community Care Coordinator
+                Leli-Kelen Chatbot
               </h1>
               <p className="text-sm text-muted-foreground">Serving those in need, together</p>
             </div>
