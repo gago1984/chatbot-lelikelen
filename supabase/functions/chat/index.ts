@@ -37,6 +37,15 @@ serve(async (req) => {
       .order('date')
       .limit(10);
 
+    // Fetch past completed services with attendance
+    const { data: pastServices } = await supabase
+      .from('service_schedule')
+      .select('*')
+      .eq('status', 'completed')
+      .not('attendance', 'is', null)
+      .order('date', { ascending: false })
+      .limit(5);
+
     // Fetch recent chat history
     const { data: chatHistory } = await supabase
       .from('chat_messages')
@@ -63,7 +72,10 @@ serve(async (req) => {
 IMPORTANT: You are bilingual and can communicate fluently in both English and Spanish. Respond in the same language the user writes to you. If they write in Spanish, respond in Spanish. If they write in English, respond in English.
 
 Current Inventory:
-${inventory?.map(item => `- ${item.name}: ${item.quantity} ${item.unit} (Low stock threshold: ${item.low_stock_threshold} ${item.unit})`).join('\n')}
+${inventory?.map(item => `- ${item.name}: ${item.quantity} ${item.unit}`).join('\n')}
+
+Recent Completed Services (with attendance):
+${pastServices?.map(s => `- ${s.date} at ${s.time} in ${s.location}: ${s.attendance} people attended`).join('\n') || 'No past services recorded yet.'}
 
 ${todayServiceInfo ? `TODAY'S SERVICES:\n${todayServiceInfo}\n` : 'No services scheduled for today.\n'}
 
@@ -72,7 +84,7 @@ ${schedule?.map(s => `- ${s.date} at ${s.time} - ${s.location} (${s.status})`).j
 
 Your role is to:
 1. Answer questions about current inventory levels in English or Spanish
-2. Identify items running low on stock
+2. Provide information about past services and attendance (typically 100-120 people per service)
 3. Provide information about scheduled service days and calculate time remaining
 4. Answer if there are services today and how many hours until they start
 5. Help coordinate tasks and operations

@@ -70,6 +70,7 @@ export type Database = {
       }
       service_schedule: {
         Row: {
+          attendance: number | null
           created_at: string
           date: string
           id: string
@@ -80,6 +81,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attendance?: number | null
           created_at?: string
           date: string
           id?: string
@@ -90,6 +92,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attendance?: number | null
           created_at?: string
           date?: string
           id?: string
