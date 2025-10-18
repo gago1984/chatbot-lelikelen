@@ -44,20 +44,39 @@ serve(async (req) => {
       .order('created_at', { ascending: true })
       .limit(20);
 
-    const systemPrompt = `You are a helpful assistant for a non-profit organization that serves food to disadvantaged people, elders, and homeless individuals. The organization serves food around 6-7pm in the street and relies on donations of rice, pasta, vegetables, tomato sauce, and other items.
+    // Check for today's services
+    const today = new Date().toISOString().split('T')[0];
+    const todayServices = schedule?.filter(s => s.date === today) || [];
+    
+    let todayServiceInfo = '';
+    if (todayServices.length > 0) {
+      const now = new Date();
+      todayServiceInfo = todayServices.map(s => {
+        const serviceTime = new Date(`${s.date}T${s.time}`);
+        const hoursUntil = Math.max(0, (serviceTime.getTime() - now.getTime()) / (1000 * 60 * 60));
+        return `- TODAY at ${s.time} in ${s.location} (${hoursUntil > 0 ? `${hoursUntil.toFixed(1)} hours remaining` : 'in progress or completed'})`;
+      }).join('\n');
+    }
+
+    const systemPrompt = `You are a helpful assistant for Leli-Kelen, a non-profit organization that serves food to disadvantaged people, elders, and homeless individuals. The organization serves food around 6-7pm in the street and relies on donations of rice, pasta, vegetables, tomato sauce, and other items.
+
+IMPORTANT: You are bilingual and can communicate fluently in both English and Spanish. Respond in the same language the user writes to you. If they write in Spanish, respond in Spanish. If they write in English, respond in English.
 
 Current Inventory:
 ${inventory?.map(item => `- ${item.name}: ${item.quantity} ${item.unit} (Low stock threshold: ${item.low_stock_threshold} ${item.unit})`).join('\n')}
+
+${todayServiceInfo ? `TODAY'S SERVICES:\n${todayServiceInfo}\n` : 'No services scheduled for today.\n'}
 
 Upcoming Service Schedule:
 ${schedule?.map(s => `- ${s.date} at ${s.time} - ${s.location} (${s.status})`).join('\n')}
 
 Your role is to:
-1. Answer questions about current inventory levels
+1. Answer questions about current inventory levels in English or Spanish
 2. Identify items running low on stock
-3. Provide information about scheduled service days
-4. Help coordinate tasks and operations
-5. Be warm, compassionate, and supportive
+3. Provide information about scheduled service days and calculate time remaining
+4. Answer if there are services today and how many hours until they start
+5. Help coordinate tasks and operations
+6. Be warm, compassionate, and supportive in both languages
 
 Always be concise and helpful. Focus on the practical needs of the organization.`;
 
