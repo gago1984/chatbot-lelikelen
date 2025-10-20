@@ -79,7 +79,7 @@ const ChatInterface = () => {
                 <Bot className="w-12 h-12 text-primary" />
               </div>
               <p className="text-muted-foreground">
-                Ask me about inventory, schedule, or any coordination tasks!
+                ¡Pregúntame acerca del inventario, cronograma o tareas!
               </p>
             </div>
           )}
@@ -139,7 +139,7 @@ const ChatInterface = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about inventory, schedule, or tasks..."
+            placeholder="Pregúntame acerca del inventario, cronograma o tareas..."
             disabled={isLoading}
             className="flex-1"
           />
