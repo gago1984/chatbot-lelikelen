@@ -76,11 +76,11 @@ EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Insert sample data
 INSERT INTO public.inventory_items (name, category, quantity, unit, low_stock_threshold) VALUES
-('Rice', 'grains', 50, 'kg', 10),
-('Pasta', 'grains', 30, 'kg', 10),
-('Tomato Sauce', 'canned', 40, 'cans', 15),
-('Vegetables', 'fresh', 25, 'kg', 8),
-('Cooking Oil', 'oils', 15, 'liters', 5);
+('Arroz', 'granos', 50, 'kg', 10),
+('Fideos', 'granos', 30, 'kg', 10),
+('Salsa de Tomate', 'enlatado', 40, 'latas', 15),
+('Vegetales', 'fresh', 25, 'kg', 8),
+('Aceite', 'aceite', 15, 'litros', 5);
 
 INSERT INTO public.service_schedule (date, time, location, status) VALUES
 (CURRENT_DATE, '18:00', 'Downtown Main Street', 'scheduled'),
