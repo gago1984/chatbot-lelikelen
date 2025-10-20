@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json();
+    const { message, conversationHistory = [] } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {
@@ -45,27 +45,6 @@ serve(async (req) => {
       .not('attendance', 'is', null)
       .order('date', { ascending: false })
       .limit(5);
-
-    // Get authenticated user
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
-    if (userError || !user) {
-      throw new Error('Unauthorized');
-    }
-
-    // Fetch recent chat history for this user
-    const { data: chatHistory } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: true })
-      .limit(20);
 
     // Check for today's services
     const today = new Date().toISOString().split('T')[0];
@@ -108,7 +87,7 @@ Always be concise and helpful. Focus on the practical needs of the organization.
 
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...(chatHistory?.map(m => ({ role: m.role, content: m.content })) || []),
+      ...conversationHistory,
       { role: 'user', content: message }
     ];
 
@@ -145,12 +124,6 @@ Always be concise and helpful. Focus on the practical needs of the organization.
 
     const data = await response.json();
     const aiResponse = data.choices[0].message.content;
-
-    // Save both messages to chat history with user_id
-    await supabase.from('chat_messages').insert([
-      { role: 'user', content: message, user_id: user.id },
-      { role: 'assistant', content: aiResponse, user_id: user.id }
-    ]);
 
     return new Response(JSON.stringify({ response: aiResponse }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

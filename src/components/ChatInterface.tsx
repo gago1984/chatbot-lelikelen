@@ -20,24 +20,19 @@ const ChatInterface = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load chat history for current user
-    const loadHistory = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: true })
-        .limit(50);
-      
-      if (data) {
-        setMessages(data.map(m => ({ role: m.role as "user" | "assistant", content: m.content })));
-      }
-    };
-    loadHistory();
+    // Load chat from sessionStorage (resets when browser closes)
+    const savedMessages = sessionStorage.getItem("chatMessages");
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
   }, []);
+
+  useEffect(() => {
+    // Save messages to sessionStorage
+    if (messages.length > 0) {
+      sessionStorage.setItem("chatMessages", JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,12 +47,10 @@ const ChatInterface = () => {
     setIsLoading(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
       const { data, error } = await supabase.functions.invoke("chat", {
-        body: { message: userMessage },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+        body: { 
+          message: userMessage,
+          conversationHistory: messages
         },
       });
 

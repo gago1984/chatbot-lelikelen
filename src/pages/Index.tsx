@@ -1,50 +1,29 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Package, Calendar, LogOut } from "lucide-react";
+import { Heart, MessageCircle, Package, Calendar } from "lucide-react";
 import ChatInterface from "@/components/ChatInterface";
 import InventoryView from "@/components/InventoryView";
 import ScheduleView from "@/components/ScheduleView";
 import StatsCards from "@/components/StatsCards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("chat");
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
-    toast({
-      title: "Sesión cerrada",
-      description: "Has salido exitosamente",
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
       {/* Header */}
       <header className="border-b border-border/40 backdrop-blur-sm bg-background/80 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-                <Heart className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Leli-Kelen Chatbot
-                </h1>
-                <p className="text-sm text-muted-foreground">Serving those in need, together</p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+              <Heart className="w-6 h-6 text-primary-foreground" />
             </div>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
-              <LogOut className="w-4 h-4" />
-              Salir
-            </Button>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Leli-Kelen Chatbot
+              </h1>
+              <p className="text-sm text-muted-foreground">Serving those in need, together</p>
+            </div>
           </div>
         </div>
       </header>
