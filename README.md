@@ -2,7 +2,7 @@
 
 ## Project info
 
-**ChatBot** https://leli-kelen-chatbot.lovable.app/
+**ChatBot**: https://leli-kelen-chatbot.lovable.app/
 
 **URL**: https://lovable.dev/projects/58e3fbea-0e5e-49a3-af4d-5ffbec5fcef3
 
